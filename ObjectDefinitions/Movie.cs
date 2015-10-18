@@ -6,7 +6,7 @@ namespace mmb.ObjectDefinitions
     public class Movie
     {
         public ObjectId _id { get; set; }
-        public string YtsMovietitle { get; set; }
+        public string YtsMovieTitle { get; set; }
         public string ImdbTitle { get; set; }
         public List<string> Urls { get; set; }
         public int Year { get; set; }

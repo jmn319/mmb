@@ -165,16 +165,33 @@ namespace mmb
             List<GetReturnObject> resultList = new List<GetReturnObject>();
             try
             {
-                List<TvShow> showList = MongoUtils.GetMongoCollection
-                (
-                    @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
-                    ConfigurationManager.AppSettings["port"],
-                    ConfigurationManager.AppSettings["db"],
-                    isShow ? ConfigurationManager.AppSettings["show_collection"] : ConfigurationManager.AppSettings["movie_collection"]
-                ).FindAllAs<TvShow>().ToList<TvShow>();
-                showList = showList.Where(s => s.Name.ToLowerInvariant().Contains(Query.ToLowerInvariant())).ToList();
-                resultList.AddRange(showList.Select(s => new GetReturnObject() { Name = s.Name, Movie = false, Show = true }));
-                resultList = resultList.OrderBy(s => s.Name).ToList();
+                if (isShow)
+                {
+                    List<TvShow> showList = MongoUtils.GetMongoCollection
+                    (
+                        @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
+                        ConfigurationManager.AppSettings["port"],
+                        ConfigurationManager.AppSettings["db"],
+                        ConfigurationManager.AppSettings["show_collection"]
+                    ).FindAllAs<TvShow>().ToList<TvShow>();
+                    showList = showList.Where(s => s.Name.ToLowerInvariant().Contains(Query.ToLowerInvariant())).ToList();
+                    resultList.AddRange(showList.Select(s => new GetReturnObject() { Name = s.Name, Movie = false, Show = true }));
+                    resultList = resultList.OrderBy(s => s.Name).ToList();
+                }
+                else
+                {
+                    List<Movie> movieList = MongoUtils.GetMongoCollection
+                    (
+                        @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
+                        ConfigurationManager.AppSettings["port"],
+                        ConfigurationManager.AppSettings["db"],
+                        ConfigurationManager.AppSettings["movie_collection"]
+                    //isShow ? ConfigurationManager.AppSettings["show_collection"] : ConfigurationManager.AppSettings["movie_collection"]
+                    ).FindAllAs<Movie>().ToList<Movie>();
+                    movieList = movieList.Where(m => m.ImdbTitle.ToLowerInvariant().Contains(Query.ToLowerInvariant())).ToList();
+                    resultList.AddRange(movieList.Select(m => new GetReturnObject() { Name = m.ImdbTitle, Movie = true, Show = false }));
+                    resultList = resultList.OrderBy(m => m.Name).ToList();
+                }
             }
             catch (Exception e)
             { Log.AppendToLog(" FATAL local search error. " + e, ConfigurationManager.AppSettings["log_file"]); }

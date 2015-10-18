@@ -138,7 +138,7 @@ namespace mmb
                         {
                            mongoCollection.Insert(new Movie()
                             {
-                                YtsMovietitle = m.MovieTitleClean,
+                                YtsMovieTitle = m.MovieTitleClean,
                                 ImdbCode = m.ImdbCode,
                                 CoverImg = m.CoverImage,
                                 Genre = m.Genre,
@@ -160,7 +160,7 @@ namespace mmb
                         //if movie already exists, add/overwrite detail
                         else
                         { //ILASM!
-                            mongoMovie[0].YtsMovietitle = m.MovieTitleClean;
+                            mongoMovie[0].YtsMovieTitle = m.MovieTitleClean;
                             mongoMovie[0].ImdbTitle = mongoMovie[0].ImdbTitle;
                             mongoMovie[0].CoverImg = m.CoverImage;
                             mongoMovie[0].Genre = m.Genre;

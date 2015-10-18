@@ -41,10 +41,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="MongoDB.Bson">
-      <HintPath>C:\ThirdParty\mongo-csharp-driver-master\MongoDB.Driver\bin\Debug\MongoDB.Bson.dll</HintPath>
+      <HintPath>..\..\ThirdParty\MongoDriver\MongoDB.Bson.dll</HintPath>
     </Reference>
     <Reference Include="MongoDB.Driver">
-      <HintPath>C:\ThirdParty\mongo-csharp-driver-master\MongoDB.Driver\bin\Debug\MongoDB.Driver.dll</HintPath>
+      <HintPath>..\..\ThirdParty\MongoDriver\MongoDB.Driver.dll</HintPath>
     </Reference>
     <Reference Include="ServiceStack, Version=4.0.40.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\ServiceStack.4.0.40\lib\net40\ServiceStack.dll</HintPath>
