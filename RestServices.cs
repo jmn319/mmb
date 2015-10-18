@@ -62,7 +62,7 @@ namespace mmb
     {
         public object Get(GetInfoRequest request)
         {
-            ///get/{MediaType}/{All}/{Pending}/{Downloaded}
+            //get/{MediaType}/{All}/{Pending}/{Downloaded}
             if (request.MediaType == "show")
             {
                 if (request.Pending == "true")

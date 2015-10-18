@@ -50,7 +50,7 @@ namespace mmb
             return resultList;
         }
 
-        //Updated August 23rd
+        //Updated October 18th
         public static List<GetReturnObject> GetMovies(bool all)
         {
             List<GetReturnObject> resultList = new List<GetReturnObject>();
@@ -61,16 +61,15 @@ namespace mmb
                     @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
                     ConfigurationManager.AppSettings["port"],
                     ConfigurationManager.AppSettings["db"],
-                    //all ? ConfigurationManager.AppSettings["movie_collection"] : ConfigurationManager.AppSettings["mymovies_collection"]
-                    "yts_movies"
+                    all ? ConfigurationManager.AppSettings["movie_collection"] : ConfigurationManager.AppSettings["mymovies_collection"]
                 ).FindAllAs<BsonDocument>().ToList<BsonDocument>();
                 resultList.AddRange(movieList.Select(m => new GetReturnObject()
                 {
-                    //Name = m.ImdbTitle ?? m.YtsMovietitle, 
+                    Name = m["ImdbTitle"] ?? m["YtsMovietitle"], 
                     Movie = true, 
                     Show = false, 
-                    //ImdbCode = m.ImdbCode, 
-                    //Year = m.Year
+                    ImdbCode = m.["ImdbCode"], 
+                    Year = m["Year"]
                 }));
                 resultList = resultList.OrderBy(m => m.Name).ToList();
             }

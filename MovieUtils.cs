@@ -193,7 +193,7 @@ namespace mmb
 
         }
 
-        //Updated August 26th
+        //Updated October 18th
         public static string AddMovieToMyMovies(string Name, string ImdbCode, string Year)
         {
             string r = "";
@@ -207,9 +207,9 @@ namespace mmb
                         ConfigurationManager.AppSettings["db"],
                         ConfigurationManager.AppSettings["mymovies_collection"]
                     ).Insert(m);
-                Log.AppendToLog(Name + " was successfully deleted in 'My Shows'.",
+                Log.AppendToLog(Name + " was successfully added in 'My Shows'.",
                     ConfigurationManager.AppSettings["log_file"]);
-                r = Name + " was successfully deleted in 'My Shows'.";
+                r = Name + " was successfully added in 'My Shows'.";
             }
             catch (Exception e)
             {
@@ -230,13 +230,13 @@ namespace mmb
                         @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
                         ConfigurationManager.AppSettings["port"],
                         ConfigurationManager.AppSettings["db"],
-                        ConfigurationManager.AppSettings["myshows_collection"]
-                    ).Remove(Query.EQ("Name", name));
+                        ConfigurationManager.AppSettings["mymovies_collection"]
+                    ).Remove(Query.EQ("ImdbTitle", name));
                 if (wc.Ok)
                 {
-                    Log.AppendToLog(name + " was successfully deleted in 'My Shows'.",
+                    Log.AppendToLog(name + " was successfully deleted in 'My Movies'.",
                         ConfigurationManager.AppSettings["log_file"]);
-                    r = name + " was successfully deleted in 'My Shows'.";
+                    r = name + " was successfully deleted in 'My Movies'.";
                 }
                 else
                 {
