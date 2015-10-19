@@ -65,11 +65,11 @@ namespace mmb
                 ).FindAllAs<BsonDocument>().ToList<BsonDocument>();
                 resultList.AddRange(movieList.Select(m => new GetReturnObject()
                 {
-                    Name = m["ImdbTitle"] ?? m["YtsMovietitle"], 
+                    Name =(string)m["ImdbTitle"] ?? (string)m["YtsMovietitle"], 
                     Movie = true, 
-                    Show = false, 
-                    ImdbCode = m.["ImdbCode"], 
-                    Year = m["Year"]
+                    Show = false,  
+                    ImdbCode = (string)m.["ImdbCode"], 
+                    Year = (int)m["Year"]
                 }));
                 resultList = resultList.OrderBy(m => m.Name).ToList();
             }
