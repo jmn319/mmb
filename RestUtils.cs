@@ -7,6 +7,7 @@ using System.Linq;
 using mmb.ObjectDefinitions;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Builders;
 
 namespace mmb
 {
@@ -68,7 +69,7 @@ namespace mmb
                     Name =(string)m["ImdbTitle"] ?? (string)m["YtsMovietitle"], 
                     Movie = true, 
                     Show = false,  
-                    ImdbCode = (string)m.["ImdbCode"], 
+                    ImdbCode = (string)m["ImdbCode"], 
                     Year = (int)m["Year"]
                 }));
                 resultList = resultList.OrderBy(m => m.Name).ToList();
@@ -158,7 +159,7 @@ namespace mmb
             return resultList;
         }
 
-        //Updated August 23rd
+        //Updated October 25th - Changed query logic TODO: move to regex and higher level mongo version
         public static List<GetReturnObject> GetLocalSearch(bool isShow, string Query)
         {
             List<GetReturnObject> resultList = new List<GetReturnObject>();
@@ -166,19 +167,21 @@ namespace mmb
             {
                 if (isShow)
                 {
+                    var q = MongoDB.Driver.Builders.Query.Matches("Name", Query);
                     List<TvShow> showList = MongoUtils.GetMongoCollection
                     (
                         @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
                         ConfigurationManager.AppSettings["port"],
                         ConfigurationManager.AppSettings["db"],
                         ConfigurationManager.AppSettings["show_collection"]
-                    ).FindAllAs<TvShow>().ToList<TvShow>();
+                    ).FindAs<TvShow>(q).ToList<TvShow>();
                     showList = showList.Where(s => s.Name.ToLowerInvariant().Contains(Query.ToLowerInvariant())).ToList();
                     resultList.AddRange(showList.Select(s => new GetReturnObject() { Name = s.Name, Movie = false, Show = true }));
                     resultList = resultList.OrderBy(s => s.Name).ToList();
                 }
                 else
                 {
+                    var q = MongoDB.Driver.Builders.Query.Matches("YtsMovieTitle", Query);
                     List<Movie> movieList = MongoUtils.GetMongoCollection
                     (
                         @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
@@ -186,9 +189,16 @@ namespace mmb
                         ConfigurationManager.AppSettings["db"],
                         ConfigurationManager.AppSettings["movie_collection"]
                     //isShow ? ConfigurationManager.AppSettings["show_collection"] : ConfigurationManager.AppSettings["movie_collection"]
-                    ).FindAllAs<Movie>().ToList<Movie>();
-                    movieList = movieList.Where(m => m.ImdbTitle.ToLowerInvariant().Contains(Query.ToLowerInvariant())).ToList();
-                    resultList.AddRange(movieList.Select(m => new GetReturnObject() { Name = m.ImdbTitle, Movie = true, Show = false }));
+                    ).FindAs<Movie>(q).ToList<Movie>();
+                    //movieList = movieList.Where(m => m.YtsMovieTitle.ToLowerInvariant().Contains(Query.ToLowerInvariant())).ToList();
+                    resultList.AddRange(movieList.Select(m => new GetReturnObject()
+                    {
+                        Name = m.YtsMovieTitle, 
+                        Movie = true, 
+                        Show = false,
+                        Year = m.Year,
+                        ImdbCode = m.ImdbCode
+                    }));
                     resultList = resultList.OrderBy(m => m.Name).ToList();
                 }
             }
