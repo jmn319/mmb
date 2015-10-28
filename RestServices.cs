@@ -27,12 +27,12 @@ namespace mmb
     }
 
     [Route("/get", "POST")]
-    public class PostInfoRequest
-    { public GetObject g { get; set; } }
+    public class PostInfoRequest : GetObject
+    { }
 
     [Route("/modify", "POST")]
-    public class ModifyInfoRequest
-    { public ModifyObject m { get; set; } }
+    public class ModifyInfoRequest : ModifyObject
+    {  }
 
     [Route("/search/{MediaType}/{Local}/{Query}", "GET")]
     [Route("/search", "POST")]
@@ -120,21 +120,21 @@ namespace mmb
 
         public object Post(PostInfoRequest request)
         {
-            if (request.g.MediaType == "show")
+            if (request.MediaType == "show")
             {
-                if (request.g.Pending)
+                if (request.Pending)
                 {
                     Console.WriteLine("Pending shows request: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                     return JsonSerializer.SerializeToString(RestUtils.GetPendingDownloaded(true, true));
                 }
-                else if (request.g.Downloaded)
+                else if (request.Downloaded)
                 {
                     Console.WriteLine("Downloaded shows request: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                     return JsonSerializer.SerializeToString(RestUtils.GetPendingDownloaded(true, false));
                 }
                 else
                 {
-                    if (request.g.All)
+                    if (request.All)
                     {
                         Console.WriteLine("All shows request: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                         return JsonSerializer.SerializeToString(RestUtils.GetShows(true));
@@ -149,19 +149,19 @@ namespace mmb
 
             else
             {
-                if (request.g.Pending)
+                if (request.Pending)
                 {
                     Console.WriteLine("Pending movies request: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                     return JsonSerializer.SerializeToString(RestUtils.GetPendingDownloaded(false, true));
                 }
-                else if (request.g.Downloaded)
+                else if (request.Downloaded)
                 {
                     Console.WriteLine("Downloaded movies request: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                     return JsonSerializer.SerializeToString(RestUtils.GetPendingDownloaded(false, false));
                 }
                 else
                 {
-                    if (request.g.All)
+                    if (request.All)
                     {
                         Console.WriteLine("All movies request: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                         return JsonSerializer.SerializeToString(RestUtils.GetMovies(true));
@@ -217,42 +217,42 @@ namespace mmb
         public object Post(ModifyInfoRequest request)
         {
             //Handle null objects on the client side code
-            if (request.m.Show)
+            if (request.Show)
             {
-                if (request.m.ModType == "delete")
+                if (request.ModType == "delete")
                 {
                     Console.WriteLine("Delete show post: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
-                    return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response", Value = TvUtils.RemoveShowFromMyShow(request.m.Name)});
+                    return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response", Value = TvUtils.RemoveShowFromMyShow(request.Name)});
                 }
-                else if (request.m.ModType == "add")
+                else if (request.ModType == "add")
                 {
                     Console.WriteLine("Add show post: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                     return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response", 
-                        Value = TvUtils.AddShowToMyShows(request.m.Name, request.m.Season, request.m.Episode)});
+                        Value = TvUtils.AddShowToMyShows(request.Name, request.Season, request.Episode)});
                 }
-                else if (request.m.ModType == "modify")
+                else if (request.ModType == "modify")
                 {
                     Console.WriteLine("Modify show post: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                     return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response", 
-                        Value = TvUtils.UpdateMyShow(request.m.Name, request.m.Season, request.m.Episode)});
+                        Value = TvUtils.UpdateMyShow(request.Name, request.Season, request.Episode)});
                 }
                 else
                 { return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response", Value = "I don't understand your request"}); }
             }
             else
             {
-                if (request.m.ModType == "delete")
+                if (request.ModType == "delete")
                 {
                     Console.WriteLine("Delete movie post: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
-                    return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response", Value = MovieUtils.RemoveMovieFromMyMovies(request.m.Name) });
+                    return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response", Value = MovieUtils.RemoveMovieFromMyMovies(request.Name) });
                 }
-                else if (request.m.ModType == "add")
+                else if (request.ModType == "add")
                 {
                     Console.WriteLine("Add movie post: " + DateTime.Now.ToString("M/d/yyyy H:mm:ss:ff"));
                     return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response",
-                        Value = MovieUtils.AddMovieToMyMovies(request.m.Name, request.m.ImdbCode, request.m.Year) });
+                        Value = MovieUtils.AddMovieToMyMovies(request.Name, request.ImdbCode, request.Year) });
                 }
-                else if (request.m.ModType == "modify")
+                else if (request.ModType == "modify")
                 //TODO: build this out... or not? is it needed?
                 { return JsonSerializer.SerializeToString(new ReturnClass() { Key = "response", Value = "I don't understand your request... yet" }); }
                 else
