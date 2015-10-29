@@ -275,7 +275,7 @@ namespace mmb
                         ConfigurationManager.AppSettings["port"],
                         ConfigurationManager.AppSettings["db"],
                         ConfigurationManager.AppSettings["movie_collection"]
-                    ).FindAs<Movie>(Query.EQ("Name", movie.ImdbTitle)).ToList<Movie>();
+                    ).FindAs<Movie>(Query.EQ("ImdbCode", movie.ImdbCode)).ToList<Movie>();
                     if (tempList[0].DownloadLogistics != null)
                         resultsList.AddRange(tempList);
                 }
