@@ -162,9 +162,9 @@ namespace mmb
                 {
                     //Download torrent file to temp folder first to be able to extract the video filename
                     DownloadFile(m.DownloadLogistics[0].TorrentUrl,
-                        ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" + m.ImdbTitle + ".torrent");
+                        ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" + ((m.ImdbTitle == null) ? m.YtsMovieTitle : m.ImdbTitle) + ".torrent");
                     //Pull video filename out of the torrent file
-                    string name = MovieUtils.NameFromDownloadString(m.ImdbTitle);
+                    string name = MovieUtils.NameFromDownloadString(((m.ImdbTitle == null) ? m.YtsMovieTitle : m.ImdbTitle));
                     int nameIndex = name.IndexOf("FileName");
                     pendingCollection.Insert(new Pending()
                     {
