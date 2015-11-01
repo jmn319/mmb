@@ -92,9 +92,18 @@ namespace mmb
                     ConfigurationManager.AppSettings["db"],
                     isPending ? ConfigurationManager.AppSettings["pending_collection"] : ConfigurationManager.AppSettings["downloaded_collection"]
                 ).FindAllAs<Pending>().ToList<Pending>();
-                resultList.AddRange(pendingList.Select(p => 
-                    p.Show == isShow ? new GetReturnObject() {Name = p.Name, Movie = false, Show = true} : 
-                    new GetReturnObject() {Name = p.Name, Movie = true, Show = false}));
+                foreach (var p in pendingList)
+                    if (p.Show == isShow)
+                        resultList.Add(new GetReturnObject()
+                        {
+                            Name = p.Name,
+                            Movie = false,
+                            Show = true,
+                            Episode = p.Episode,
+                            Season = p.Season
+                        });
+                    else if (p.Movie != isShow)
+                        resultList.Add(new GetReturnObject() { Name = p.Name, Movie = true, Show = false });
                 resultList = resultList.OrderBy(s => s.Name).ToList();
             }
             catch (Exception e)
