@@ -111,7 +111,10 @@ namespace mmb
         public static string YtsUrlIncrementor(int set)
         { return ConfigurationManager.AppSettings["yts_root"] + ConfigurationManager.AppSettings["yts_suffix"] + set; }
 
-        //Updated July 26th 
+        public static string YtsUrl()
+        { return ConfigurationManager.AppSettings["yts_root"] + ConfigurationManager.AppSettings["yts_suffix"]; }
+
+        //Updated December 6th - updated YTS logic
         public static void WriteYtsMovieData()
         {
             int setNumber = 1;
@@ -128,55 +131,56 @@ namespace mmb
                 while (movies > setNumber * 50)
                 {
                     var results = DownloadMgmtUtils.GetJsonObject(YtsUrlIncrementor(setNumber));
-                    if (setNumber == 1) { movies = results.MovieCount; }
+                    if (setNumber == 1) { movies = results.movie_count; }
                     
-                    foreach (var m in results.MovieList)
+                    foreach (var m in results.movies)
                     {
                         //Check to see if the movie exists in the collection
-                        var mongoMovie = mongoCollection.FindAs<Movie>(Query.EQ("ImdbCode", m.ImdbCode)).ToList<Movie>();
-                        if (mongoMovie.Count == 0)
+                        var mongoMovie = mongoCollection.FindAs<Movie>(Query.EQ("ImdbCode", m.imdb_code)).ToList<Movie>();
+                        if (mongoMovie.Count == 0 && m.torrents != null)
                         {
                            mongoCollection.Insert(new Movie()
                             {
-                                YtsMovieTitle = m.MovieTitleClean,
-                                ImdbCode = m.ImdbCode,
-                                CoverImg = m.CoverImage,
-                                Genre = m.Genre,
-                                Year = Convert.ToInt16(m.MovieYear),
-                                Urls = new List<string>() { m.ImdbLink, m.MovieUrl },
+                                YtsMovieTitle = m.title.Replace(":", ""),
+                                ImdbCode = m.imdb_code,
+                                CoverImg = m.background_image,
+                                Genre = m.genres[0],
+                                Year = Convert.ToInt16(m.year),
+                                Urls = new List<string>() { m.url },
                                 DownloadLogistics = new List<DownloadDetails>()
                                 {
                                     new DownloadDetails()
                                     {
-                                        Size = m.Size,
-                                        SizeBytes = m.SizeByte,
-                                        TorrentUrl = m.TorrentUrl,
-                                        Seeds = Convert.ToInt16(m.TorrentSeeds),
-                                        Quality = m.Quality
+                                        Size = m.torrents[0].size,
+                                        SizeBytes = m.torrents[0].size_bytes,
+                                        TorrentUrl = m.torrents[0].url,
+                                        Seeds = Convert.ToInt16(m.torrents[0].seeds),
+                                        Quality = m.torrents[0].quality
                                     }
                                 }
                             });
                         }
                         //if movie already exists, add/overwrite detail
-                        else
+                        else if (m.torrents != null)
                         { //ILASM!
-                            mongoMovie[0].YtsMovieTitle = m.MovieTitleClean;
+                            mongoMovie[0].YtsMovieTitle = m.title.Replace(":", "");
                             mongoMovie[0].ImdbTitle = mongoMovie[0].ImdbTitle;
-                            mongoMovie[0].CoverImg = m.CoverImage;
-                            mongoMovie[0].Genre = m.Genre;
-                            mongoMovie[0].Year = Convert.ToInt16(m.MovieYear);
+                            mongoMovie[0].CoverImg = m.background_image;
+                            mongoMovie[0].Genre = m.genres[0];
+                            mongoMovie[0].Year = Convert.ToInt16(m.year);
                             mongoMovie[0].DownloadLogistics = new List<DownloadDetails>()
                             {
                                 new DownloadDetails()
                                 {
-                                    Size = m.Size,
-                                    SizeBytes = m.SizeByte,
-                                    TorrentUrl = m.TorrentUrl,
-                                    Seeds = Convert.ToInt16(m.TorrentSeeds),
-                                    Quality = m.Quality
+                                    Size = m.torrents[0].size,
+                                    SizeBytes = m.torrents[0].size_bytes,
+                                    TorrentUrl = m.torrents[0].url,
+                                    Seeds = Convert.ToInt16(m.torrents[0].seeds),
+                                    Quality = m.torrents[0].quality
                                 }
                             };
-                            mongoMovie[0].Urls.Add(m.MovieUrl);
+                            if (!mongoMovie[0].Urls.Contains(m.url))
+                                mongoMovie[0].Urls.Add(m.url);
                             mongoCollection.Save(mongoMovie[0]);
                         }
                     }
@@ -276,7 +280,7 @@ namespace mmb
                         ConfigurationManager.AppSettings["db"],
                         ConfigurationManager.AppSettings["movie_collection"]
                     ).FindAs<Movie>(Query.EQ("ImdbCode", movie.ImdbCode)).ToList<Movie>();
-                    if (tempList[0].DownloadLogistics != null)
+                    if (tempList.Count != 0 && tempList[0].DownloadLogistics != null)
                         resultsList.AddRange(tempList);
                 }
                 return resultsList;
@@ -348,8 +352,8 @@ namespace mmb
                     ConfigurationManager.AppSettings["port"],
                     ConfigurationManager.AppSettings["db"],
                     ConfigurationManager.AppSettings["pending_collection"]
-                ).FindAs<Pending>(Query.EQ("Name", m.ImdbTitle)).ToList<Pending>();
-                if (pendingList.Count == 0) return true;
+                ).FindAs<Pending>(Query.EQ("Name", m.YtsMovieTitle)).ToList<Pending>();
+                if (pendingList.Count != 0) return true;
                 else return false;
             }
             catch (Exception e)

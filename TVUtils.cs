@@ -671,14 +671,16 @@ namespace mmb
                     );
 
                 var q = Query.And(Query.EQ("Name", name), Query.EQ("Season", season), Query.EQ("Episode", episode));
-                downloadedCollection.Insert(pendingCollection.FindAs<Pending>(q));
+                List<Pending> searchResults = pendingCollection.FindAs<Pending>(q).ToList();
+                if (searchResults.Count != 0)
+                    downloadedCollection.Insert(searchResults[0]);
                 pendingCollection.Remove(q, RemoveFlags.Single);
-                Log.AppendToLog("Error : Show moved from pending collection to downloaded collection.",
+                Log.AppendToLog("Success : Show moved from pending collection to downloaded collection.",
                     ConfigurationManager.AppSettings["log_file"]);
             }
             catch (Exception e)
             {
-                Log.AppendToLog(": FATAL Show not moved from pending." + e, ConfigurationManager.AppSettings["log_file"]);
+                Log.AppendToLog(" FATAL : Show not moved from pending." + e, ConfigurationManager.AppSettings["log_file"]);
             }
         }
 

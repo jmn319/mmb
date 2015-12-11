@@ -28,7 +28,7 @@ namespace mmb
             {
                 // Create a new WebClient instance.
                 WebClient myWebClient = new WebClient();
-                myWebClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+                myWebClient.Headers.Add("user-agent", ConfigurationManager.AppSettings["user-agent"]);
                 //move to log to file
                 Log.AppendToLog("Downloading File \"" + fileName + "\" from \"" + url + "\" .......\n",
                     ConfigurationManager.AppSettings["log_file"]);
@@ -66,20 +66,20 @@ namespace mmb
                 tempS.AddRange(Directory.GetDirectories(ConfigurationManager.AppSettings["file_download_path"]).ToList());
 
                 foreach (var p in pendingList)
-                    foreach (var str in tempS.Where(str => str.Contains(p.FileName)))
-                        if (p.Movie)
+                    foreach (var str in tempS.Where(str => str.Equals(ConfigurationManager.AppSettings["file_download_path"] + @"\" + p.FileName)))
+                         if (p.Movie)
                         {
                             MoveFile(str.Replace(@"\\", @"\"), str.Replace(@"\\", @"\").Replace(ConfigurationManager.AppSettings["file_download_path"],
                                     ConfigurationManager.AppSettings["movie_move_path"]));
                             MovieUtils.SetToDownloaded(p.Name);
-                            MovieUtils.MoveToDownloaded(p.FileName);
+                            MovieUtils.MoveToDownloaded(p.Name);
                         }
                         else if (p.Show)
                         {
                             MoveFile(str.Replace(@"\\", @"\"), str.Replace(@"\\", @"\").Replace(ConfigurationManager.AppSettings["file_download_path"],
                                 ConfigurationManager.AppSettings["show_move_path"]));
                             TvUtils.SetToDownloaded(p.Name, p.Season, p.Episode);
-                            TvUtils.MoveToDownloaded(p.FileName, p.Season, p.Episode);
+                            TvUtils.MoveToDownloaded(p.Name, p.Season, p.Episode);
                             TvUtils.UpdateCheckMyShow(p.Name, p.Season, p.Episode);
                         }
             }
@@ -165,25 +165,29 @@ namespace mmb
                         ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" + ((m.ImdbTitle == null) ? m.YtsMovieTitle : m.ImdbTitle) + ".torrent");
                     //Pull video filename out of the torrent file
                     string name = MovieUtils.NameFromDownloadString(((m.ImdbTitle == null) ? m.YtsMovieTitle : m.ImdbTitle));
-                    int nameIndex = name.IndexOf("FileName");
+                    List<string> fileNameArry = name.Split(':').ToList();
+                    foreach (var f in fileNameArry.Where(f => f.Contains("name")))
+                    {
+                        name = fileNameArry[fileNameArry.IndexOf(f) + 1];
+                        name = name.Substring(0, name.Length - 2);
+                        break;
+                    }
+
                     pendingCollection.Insert(new Pending()
                     {
-                        FileName =
-                            name.Substring(
-                                name.IndexOf("FileName") + name.Substring(nameIndex + 4, 4).Split(':')[0].Length + 5,
-                                Convert.ToInt32(name.Substring(nameIndex + 4, 4).Split(':')[0])),
-                        Name = m.ImdbTitle,
+                        FileName = name,
+                        Name = m.YtsMovieTitle,
                         Show = false,
                         Movie = true
                     });
                     //Move the torrent file from temp into downloads
-                    MoveFile(ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" + m.ImdbTitle + ".torrent",
-                        ConfigurationManager.AppSettings["torrent_download_path"] + @"\" + m.ImdbTitle + ".torrent");
+                    MoveFile(ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" + m.YtsMovieTitle + ".torrent",
+                        ConfigurationManager.AppSettings["torrent_download_path"] + @"\" + m.YtsMovieTitle + ".torrent");
                     break;
                 }
             }
             catch (Exception e)
-            { Log.AppendToLog("Error : FATAL download show. " + e, ConfigurationManager.AppSettings["log_file"]); }
+            { Log.AppendToLog("Error : FATAL download movie. " + e, ConfigurationManager.AppSettings["log_file"]); }
         }
 
         //Updated July 15th
@@ -194,7 +198,8 @@ namespace mmb
                 string htmlString;
                 using (WebClient client = new WebClient())
                 {
-                    client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+                    //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+                    client.Headers.Add("user-agent", ConfigurationManager.AppSettings["user-agent"]);
                     htmlString = client.DownloadString(url);
                 }
 
@@ -222,39 +227,41 @@ namespace mmb
                 string htmlString;
                 using (WebClient client = new WebClient())
                 {
-                    client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)"); 
+                    client.Headers.Add("user-agent", ConfigurationManager.AppSettings["user-agent"]); 
                     htmlString = client.DownloadString(url);
                 }
                 return htmlString;
             }
             catch (Exception e)
-            { Log.AppendToLog("Error : FATAL Retrieval of IMDB results : " + e, ConfigurationManager.AppSettings["log_file"]); return "Error"; }
+            { Log.AppendToLog("Error : FATAL Retrieval of IMDB results : " + url + " " + e, ConfigurationManager.AppSettings["log_file"]); return "Error"; }
         }
 
-        //Updated July 26th
-        public static YtsReturn GetJsonObject(string url)
+        //Updated December 6th
+        public static YtsReturn_v2 GetJsonObject(string url)
         {
             try
             {
                 string htmlString;
                 using (WebClient client = new WebClient())
                 { htmlString = client.DownloadString(url); }
-                return JsonSerializer.DeserializeFromString<YtsReturn>(htmlString);
+                return JsonSerializer.DeserializeFromString<YtsReturnHeaders>(htmlString).data[0];
             }
             catch (Exception e)
             {
-                Log.AppendToLog("Error : FATAL Retrieval of YTS json object : " + e, ConfigurationManager.AppSettings["log_file"]);
+                Log.AppendToLog("Error : FATAL Retrieval of YTS json object (" + url + "). " + e, ConfigurationManager.AppSettings["log_file"]);
                 return null;
             }
         }
 
-        //Updated August 16th
+        //Updated Decmeber 6th - updated overwrite logic
         public static void MoveFile(string from, string to)
         {
             try
             {
                 if (Directory.Exists(to))
                     Directory.Delete(to);
+                else if (File.Exists(to))
+                    File.Delete(to); 
                 else ;
                 File.Move(from, to);
                 Log.AppendToLog("Moved file " + from + " to " + to, ConfigurationManager.AppSettings["log_file"]);
