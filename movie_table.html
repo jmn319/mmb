@@ -1,0 +1,22 @@
+<br></br>
+<div class="span12 section-body" id='bodySpan'>
+	<table  class="table table-bordered table-striped pull-left">
+		<thead>
+			<tr>
+				<th>Movie</th>
+				<th style="width: 175px; vertical-align: middle; text-align: center;">Delete</th>
+			</tr>
+		</thead>
+		<tbody ng-repeat='m in mymovies'>
+			<tr>
+				<td style="vertical-align: middle;">{{m.Name}} {{m.Year}}</td>
+				<td style="vertical-align: middle; text-align: center;">
+					<button type="button" class="btn btn-danger btn-xs" ng-click='displayMovieModifyModal(m, "deleteMovieModal")'>Delete</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<button type="button" class="btn btn-success" ng-click='displayModal("addMovieModal")'>Add Movie</button>
+</div>
+<div ng-include="'deleteMovieModal.html'"></div>
+<div ng-include="'addMovieModal.html'"></div>

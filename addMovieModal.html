@@ -1,0 +1,35 @@
+<div id="addMovieModal" class="modal hide fade" style="min-width: 150px; min-height: 5px">  
+	<div class="modal-header">  
+		<button class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+		<h3>Add Movie</h3>
+		<p>Attempt to add from local search first. If your movie isn't found add it through IMDB search.</p>
+	</div>  
+	<div class="modal-body">
+		<div class="input-group" style="text-align:center;">
+			<span class="input-group-addon pagination-centered">Local Search*: </span>
+			<input ng-model="searchLocalMovie"></input>
+			<button class="btn btn-success" ng-click='searchMovieLocal(searchLocalMovie)' data-keyboard="true">Search</button>
+		</div>
+		<p style="text-align:center;">*Case sensitive (TODO: switch to regex to eliminate this constraint)</p>
+		<div class="input-group" style="text-align:center;" ng-show="localMovieSearchList">
+			<select class="selectpicker" ng-model='selectedMovie' data-live-search="true">
+				<option ng-repeat='n in searchResults'>{{n.Name}} ({{n.Year}})</option>
+			</select>
+		</div>
+		<p></p>
+		<div class="input-group" style="text-align:center;">
+			<span class="input-group-addon pagination-centered">IMDB Search: </span>
+			<input ng-model="searchIMDBMovie"></input>
+			<button class="btn btn-success" ng-click='searchIMDB(searchIMDBMovie)' data-keyboard="true">Search</button>
+		</div>
+		<div class="input-group" style="text-align:center;" ng-show="imdbMovieSearchList">
+			<select class="selectpicker" ng-model='selectedMovie' data-live-search="true">
+				<option ng-repeat='n in searchResults'>{{n.Name}} ({{n.Year}})</option>
+			</select>
+		</div>
+	</div> 
+	<div class="modal-footer">
+		<button class="btn btn-success pull-right" data-dismiss="modal" ng-click='saveMovie(selectedMovie)'>Save</button>
+		<button class="btn btn-danger pull-left" data-dismiss="modal" ng-click='dismissSearchModal()'>Dismiss Changes</button>
+	</div>
+</div> 

@@ -1,0 +1,30 @@
+<div id="addModal" class="modal hide fade" style="min-width: 100px; min-height: 5px">  
+	<div class="modal-header">  
+		<button class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+		<h3>Add Show</h3>
+	</div>  
+	<div class="modal-body">
+		<div class="input-group" style="text-align:center;">
+			<span class="input-group-addon pagination-centered">Show: </span>
+			<input ng-model="searchShow"></input>
+			<button class="btn btn-success" ng-click='searchShows(searchShow)' data-keyboard="true">Search</button>
+		</div>
+		<div class="input-group" style="text-align:center;" ng-show="showSearchList">
+			<select class="selectpicker" ng-model='selectedShow.Name' data-live-search="true">
+				<option ng-repeat='s in searchResults'>{{s.Name}}</option>
+			</select>
+		</div>
+		<div class="input-group" style="text-align:center;">
+			<span class="input-group-addon pagination-centered">Season: </span>
+			<input type="text" class="form-control" ng-model='selectedShow.Season'>
+		</div>
+		<div class="input-group" style="text-align:center;">
+			<span class="input-group-addon pagination-centered">Episode: </span>
+			<input type="text" class="form-control" ng-model='selectedShow.Episode'>
+		</div>
+	</div> 
+	<div class="modal-footer">
+		<button class="btn btn-success pull-left" data-dismiss="modal" ng-click='saveAddShow(selectedShow)'>Save</button>
+		<button class="btn btn-danger" data-dismiss="modal" ng-click='dismissSearchModal()'>Dismiss Changes</button>
+	</div>
+</div> 

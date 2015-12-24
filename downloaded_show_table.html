@@ -1,0 +1,19 @@
+<br></br>
+<div class="span12 section-body" id='bodySpan'>
+	<table  class="table table-bordered table-striped pull-left">
+		<thead>
+			<tr>
+				<th>Show</th>
+				<th style="width: 200px;">Season</th>
+				<th style="width: 200px;">Episode</th>
+			</tr>
+		</thead>
+		<tbody ng-repeat='s in downloadedshows'>
+			<tr>
+				<td style="vertical-align: middle;">{{s.Name}}</td>
+				<td style="vertical-align: middle;">{{s.Season}}</td>
+				<td style="vertical-align: middle;">{{s.Episode}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

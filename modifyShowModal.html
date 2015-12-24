@@ -1,0 +1,20 @@
+<div id="modifyShowModal" class="modal hide fade" style="min-width: 100px; min-height: 5px">  
+	<div class="modal-header">  
+		<button class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+		<h3>{{myshows[show_index].Name}}</h3>
+	</div>  
+	<div class="modal-body">
+		<div class="input-group" style="text-align:center;">
+			<span class="input-group-addon pagination-centered">Season: </span>
+			<input type="text" class="form-control" ng-model='myshows[show_index].Season'>
+		</div>
+		<div class="input-group" style="text-align:center;">
+			<span class="input-group-addon pagination-centered">Episode: </span>
+			<input type="text" class="form-control" ng-model='myshows[show_index].Episode'>
+		</div>
+	</div> 
+	<div class="modal-footer">
+		<button class="btn btn-success pull-left" data-dismiss="modal" ng-click='saveModifyShow(myshows[show_index])'>Save</button>
+		<button class="btn btn-danger" data-dismiss="modal">Dismiss Changes</button>
+	</div>
+</div> 

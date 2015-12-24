@@ -1,0 +1,29 @@
+<br></br>
+<div class="span12 section-body" id='bodySpan'>
+	<table  class="table table-bordered table-striped pull-left">
+		<thead>
+			<tr>
+				<th>Show</th>
+				<th style="width: 200px;">Latest Season</th>
+				<th style="width: 200px;">Latest Episode</th>
+				<th style="width: 175px;">Modify/Delete</th>
+			</tr>
+		</thead>
+		<tbody ng-repeat='s in myshows'>
+			<tr>
+				<td style="vertical-align: middle;">{{s.Name}}</td>
+				<td style="vertical-align: middle;">{{s.Season}}</td>
+				<td style="vertical-align: middle;">{{s.Episode}}</td>
+				<td style="vertical-align: middle;">
+					<button type="button" class="btn btn-primary btn-xs" ng-click='displayShowModifyModal(s, "modifyShowModal")'>Modify</button>
+					<div style="width: 5px; display: inline-block;"/>
+					<button type="button" class="btn btn-danger btn-xs" ng-click='displayShowModifyModal(s, "deleteShowModal")'>Delete</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<button type="button" class="btn btn-success" ng-click='displayModal("addModal")'>Add Show</button>
+</div>
+<div ng-include="'modifyShowModal.html'"></div>
+<div ng-include="'deleteShowModal.html'"></div>
+<div ng-include="'addShowModal.html'"></div>
