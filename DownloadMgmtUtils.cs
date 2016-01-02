@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using HtmlAgilityPack;
 using mmb.ObjectDefinitions;
 using MongoDB.Driver;
@@ -87,7 +88,7 @@ namespace mmb
             { Log.AppendToLog("Error : FATAL monitor and move. " + e, ConfigurationManager.AppSettings["log_file"]); }
         }
 
-        //Updated July 24th - Error handling in inner methods
+        //Updated December 23rd - Sleep 1 min
         public static void DownloadTorrentFiles()
         {
             List<BasicShow> showsToDownload = TvUtils.GetEpisodesToDownload();
@@ -95,6 +96,7 @@ namespace mmb
             TvUtils.SetShowDownloadLocations(showsToDownload);
             DownloadShows(showsToDownload);
             DownloadMovies(moviesToDownload);
+            Thread.Sleep(60000);
         }
 
         //Updated July 24th
@@ -158,7 +160,7 @@ namespace mmb
                     ConfigurationManager.AppSettings["pending_collection"]
                 );
 
-                foreach (var m in moviesToDownload.Where(s => !MovieUtils.IsInPending(s)))
+                foreach (var m in moviesToDownload.Where(s => !MovieUtils.IsInPending(s) && !MovieUtils.IsInDownloaded(s)))
                 {
                     //Download torrent file to temp folder first to be able to extract the video filename
                     DownloadFile(m.DownloadLogistics[0].TorrentUrl,

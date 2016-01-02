@@ -325,16 +325,26 @@ namespace mmb
                 );
 
                 MongoCollection pendingCollection = MongoUtils.GetMongoCollection
-                    (
-                        @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
-                        ConfigurationManager.AppSettings["port"],
-                        ConfigurationManager.AppSettings["db"],
-                        ConfigurationManager.AppSettings["pending_collection"]
-                    );
+                (
+                    @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
+                    ConfigurationManager.AppSettings["port"],
+                    ConfigurationManager.AppSettings["db"],
+                    ConfigurationManager.AppSettings["pending_collection"]
+                );
+
+                MongoCollection myMovieCollection = MongoUtils.GetMongoCollection
+                (
+                    @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
+                    ConfigurationManager.AppSettings["port"],
+                    ConfigurationManager.AppSettings["db"],
+                    ConfigurationManager.AppSettings["mymovies_collection"]
+                );
 
                 var q = Query.And(Query.EQ("Name", name));
-                downloadedCollection.Insert(pendingCollection.FindAs<Pending>(q));
-                pendingCollection.Remove(q);
+                downloadedCollection.Insert(pendingCollection.FindOneAs<Pending>(Query.EQ("Name", name)));
+                //var p = pendingCollection.FindOneAs<Pending>(Query.EQ("Name", name));
+                pendingCollection.Remove(Query.EQ("Name", name));
+                myMovieCollection.Remove(Query.EQ("ImdbTitle", name));
                 Log.AppendToLog("Movie moved from pending collection to downloaded collection.", ConfigurationManager.AppSettings["log_file"]);
             }
             catch (Exception e)
@@ -354,6 +364,25 @@ namespace mmb
                     ConfigurationManager.AppSettings["pending_collection"]
                 ).FindAs<Pending>(Query.EQ("Name", m.YtsMovieTitle)).ToList<Pending>();
                 if (pendingList.Count != 0) return true;
+                else return false;
+            }
+            catch (Exception e)
+            { Log.AppendToLog("Error : Checking pending movies. " + e, ConfigurationManager.AppSettings["log_file"]); return false; }
+        }
+
+        //Wrote December 23rd
+        public static bool IsInDownloaded(Movie m)
+        {
+            try
+            {
+                List<Pending> downloadedList = MongoUtils.GetMongoCollection
+                (
+                    @"mongodb://" + ConfigurationManager.AppSettings["mongoHost"] + @"/",
+                    ConfigurationManager.AppSettings["port"],
+                    ConfigurationManager.AppSettings["db"],
+                    ConfigurationManager.AppSettings["downloaded_collection"]
+                ).FindAs<Pending>(Query.EQ("Name", m.YtsMovieTitle)).ToList<Pending>();
+                if (downloadedList.Count != 0) return true;
                 else return false;
             }
             catch (Exception e)
