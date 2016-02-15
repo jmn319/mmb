@@ -114,7 +114,7 @@ namespace mmb
         public static string YtsUrl()
         { return ConfigurationManager.AppSettings["yts_root"] + ConfigurationManager.AppSettings["yts_suffix"]; }
 
-        //Updated December 6th - updated YTS logic
+        //Updated February 15th - updated YTS logic
         public static void WriteYtsMovieData()
         {
             int setNumber = 1;
@@ -139,46 +139,51 @@ namespace mmb
                         var mongoMovie = mongoCollection.FindAs<Movie>(Query.EQ("ImdbCode", m.imdb_code)).ToList<Movie>();
                         if (mongoMovie.Count == 0 && m.torrents != null)
                         {
-                           mongoCollection.Insert(new Movie()
-                            {
-                                YtsMovieTitle = m.title.Replace(":", ""),
-                                ImdbCode = m.imdb_code,
-                                CoverImg = m.background_image,
-                                Genre = m.genres[0],
-                                Year = Convert.ToInt16(m.year),
-                                Urls = new List<string>() { m.url },
-                                DownloadLogistics = new List<DownloadDetails>()
-                                {
+                            var downloadDetails = new List<DownloadDetails>();
+                            for (int i = 0; i < m.torrents.Count; i++)
+                                downloadDetails.Add(
                                     new DownloadDetails()
                                     {
-                                        Size = m.torrents[0].size,
-                                        SizeBytes = m.torrents[0].size_bytes,
-                                        TorrentUrl = m.torrents[0].url,
-                                        Seeds = Convert.ToInt16(m.torrents[0].seeds),
-                                        Quality = m.torrents[0].quality
+                                        Size = m.torrents[i].size,
+                                        SizeBytes = m.torrents[i].size_bytes,
+                                        TorrentUrl = m.torrents[i].url,
+                                        Seeds = Convert.ToInt16(m.torrents[i].seeds),
+                                        Quality = m.torrents[i].quality
                                     }
-                                }
-                            });
+                                );
+
+                                mongoCollection.Insert(new Movie()
+                                {
+                                    YtsMovieTitle = m.title.Replace(":", ""),
+                                    ImdbCode = m.imdb_code,
+                                    CoverImg = m.background_image,
+                                    Genre = m.genres[0],
+                                    Year = Convert.ToInt16(m.year),
+                                    Urls = new List<string>() { m.url },
+                                    DownloadLogistics = downloadDetails
+                                });
                         }
                         //if movie already exists, add/overwrite detail
                         else if (m.torrents != null)
                         { //ILASM!
+                            var downloadDetails = new List<DownloadDetails>();
+                            for (int i = 0; i < m.torrents.Count; i++)
+                                downloadDetails.Add(
+                                    new DownloadDetails()
+                                    {
+                                        Size = m.torrents[i].size,
+                                        SizeBytes = m.torrents[i].size_bytes,
+                                        TorrentUrl = m.torrents[i].url,
+                                        Seeds = Convert.ToInt16(m.torrents[i].seeds),
+                                        Quality = m.torrents[i].quality
+                                    }
+                                );
                             mongoMovie[0].YtsMovieTitle = m.title.Replace(":", "");
                             mongoMovie[0].ImdbTitle = mongoMovie[0].ImdbTitle;
                             mongoMovie[0].CoverImg = m.background_image;
                             mongoMovie[0].Genre = m.genres[0];
                             mongoMovie[0].Year = Convert.ToInt16(m.year);
-                            mongoMovie[0].DownloadLogistics = new List<DownloadDetails>()
-                            {
-                                new DownloadDetails()
-                                {
-                                    Size = m.torrents[0].size,
-                                    SizeBytes = m.torrents[0].size_bytes,
-                                    TorrentUrl = m.torrents[0].url,
-                                    Seeds = Convert.ToInt16(m.torrents[0].seeds),
-                                    Quality = m.torrents[0].quality
-                                }
-                            };
+                            mongoMovie[0].DownloadLogistics = downloadDetails;
                             if (!mongoMovie[0].Urls.Contains(m.url))
                                 mongoMovie[0].Urls.Add(m.url);
                             mongoCollection.Save(mongoMovie[0]);

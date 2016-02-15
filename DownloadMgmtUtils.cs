@@ -162,8 +162,19 @@ namespace mmb
 
                 foreach (var m in moviesToDownload.Where(s => !MovieUtils.IsInPending(s) && !MovieUtils.IsInDownloaded(s)))
                 {
+                    var torURL = "";
+                    //Is the preferred download quality avilable?
+                    foreach (var t in m.DownloadLogistics)
+                        if (t.Quality == ConfigurationManager.AppSettings["yts_quality_pref"])
+                            torURL = t.TorrentUrl;
+                    //Preferred quality was not available. Get next.
+                    if (torURL == "")
+                        foreach (var t in m.DownloadLogistics)
+                            if (t.Quality != ConfigurationManager.AppSettings["yts_quality_excl"])
+                                torURL = t.TorrentUrl;
+                      
                     //Download torrent file to temp folder first to be able to extract the video filename
-                    DownloadFile(m.DownloadLogistics[0].TorrentUrl,
+                    DownloadFile(torURL,
                         ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" + ((m.ImdbTitle == null) ? m.YtsMovieTitle : m.ImdbTitle) + ".torrent");
                     //Pull video filename out of the torrent file
                     string name = MovieUtils.NameFromDownloadString(((m.ImdbTitle == null) ? m.YtsMovieTitle : m.ImdbTitle));
