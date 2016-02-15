@@ -1,0 +1,31 @@
+<div id="menu-left" class="span2">
+	<div  class="sidebar-nav">
+		<ul class="nav nav-list">
+			<li class="accordion-menu">
+			<a href="#collapseOne" data-toggle="collapse" class="accordion-toggle"><i class="icon-facetime-video"></i><span> Shows<i class="icon-chevron-down pull-right"></i></span></a>
+			<div class="accordion-body collapse dropdown" id="collapseOne">
+				<div class="accordion-inner">
+					<ul class="nav nav-list" id='show_options'>
+						<li ng-click='setView("show_table.html")'><a href="">My Shows</a></li>
+						<li ng-click='setView("pending_show_table.html")'><a href="">Pending</a></li>
+						<li ng-click='setView("downloaded_show_table.html")'><a href="">Recently Downloaded</a></li>
+					</ul>
+				</div>
+			</div>
+			</li>        
+			<li class="accordion-menu">    
+				<a href="#collapseTwo" data-toggle="collapse" class="accordion-toggle"><i class="icon-film"></i><span> Movies<i class="icon-chevron-down pull-right"></i></span></a>
+				<div class="accordion-body collapse dropdown" id="collapseTwo">
+					<div class="accordion-inner">
+						<ul class="nav nav-list">
+							<li ng-click='setView("movie_table.html")'><a href="">Movie Queue</a></li>
+							<li ng-click='setView("pending_movie_table.html")'><a href="">Pending</a></li>
+							<li ng-click='setView("downloaded_movie_table.html")'><a href="">Recently Downloaded</a></li>
+						</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<div class='togglemenuleft'><p></p></div>
+	</div>
+</div>

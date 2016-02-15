@@ -1,0 +1,37 @@
+/*------------------------------------------------------------------
+
+[Dashboard Stylesheet]
+
+    Project:        Maniadmin V2.0 - Responsive Admin Theme
+    Version:        2.0
+    Last change:    07/12/2012
+    Assigned to:    Turbo
+-------------------------------------------------------------------*/
+/** *************************************
+       tables sorting 
+************************************ **/
+.dataTables_paginate {
+  float: right;
+  text-align: right;
+  margin: 10px 0;
+}
+.dataTables_paginate a {
+  background-color: #FFFFFF;
+  border: 1px solid #DDDDDD;
+  border-radius: 15px 15px 15px 15px;
+  display: inline-block;
+  padding: 5px 14px;
+}
+.dataTables_length {
+  float: left;
+  width: 40%;
+}
+.dataTables_filter {
+  float: right;
+  text-align: right;
+  width: 50%;
+}
+.dataTables_info {
+  float: left;
+  width: 60%;
+}

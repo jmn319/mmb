@@ -1,0 +1,28 @@
+/** DATE PICKER **/
+.ui-datepicker { background: url(../img/blacktrans.png); -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;}
+.ui-datepicker { z-index: 100 !important; display: none; padding: 5px; }
+.ui-datepicker-header { position: relative; text-align: center; background: url(../img/blacktrans.png); padding: 5px; color: #fff; }
+.ui-datepicker-calendar { border-collapse: collapse; border: 1px solid #ccc; border-top: 0; }
+.ui-datepicker-calendar thead th { font-weight: normal; font-size: 10px; text-transform: uppercase; color: #666; }
+.ui-datepicker-calendar thead th {  border-bottom: 1px solid #ccc; }
+.ui-datepicker-calendar td { border-left: 1px solid #ccc; border-top: 1px solid #ccc; text-align: right; }
+.ui-datepicker-calendar td { padding: 1px; }
+.ui-datepicker-calendar td a { display: block; padding: 2px 8px; color: #666; text-shadow: 1px 1px #f7f7f7; }
+.ui-datepicker-calendar td a:hover { background: #c8d9ed; text-decoration: none; color: #333; }
+.ui-datepicker-calendar td:first-child { border-left: 1px solid #ccc; }
+.ui-datepicker-prev, .ui-datepicker-next { display: inline-block; width: 14px; height: 14px; }
+.ui-datepicker-prev span, .ui-datepicker-next span { display: none; }
+.ui-datepicker-prev { position: absolute; top: 9px; left: 5px; background: url(../img/calarrow.png) no-repeat 3px -39px; }
+.ui-datepicker-next { position: absolute; top: 9px; right: 5px; background: url(../img/calarrow.png) no-repeat 3px 1px; }
+
+.ui-datepicker-inline { padding: 0; background: #fff; }
+.ui-datepicker-inline .ui-datepicker-calendar { width: 100%; border: 0; }
+.ui-datepicker-inline .ui-datepicker-calendar td { border-left: 1px solid #ddd; border-top: 1px solid #ddd; text-align: right; }
+.ui-datepicker-inline .ui-datepicker-header { 
+	position: relative; text-align: center; padding: 5px; background: #eee; color: #333; border-bottom: 1px solid #ddd; 
+	font-weight: bold; 
+}
+.ui-datepicker-inline .ui-datepicker-calendar thead th { 
+	font-weight: normal; font-size: 10px; text-transform: uppercase; color: #666; font-weight: bold; 
+	background: url(../imf/titlebg.png) repeat-x top left; border-bottom: 1px solid #ccc;
+}

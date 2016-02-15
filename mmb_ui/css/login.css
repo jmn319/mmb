@@ -1,0 +1,46 @@
+/*------------------------------------------------------------------
+
+[Dashboard Stylesheet]
+
+    Project:        Maniadmin V2.0 - Responsive Admin Theme
+    Version:        2.0
+    Last change:    07/12/2012
+    Assigned to:    Turbo
+-------------------------------------------------------------------*/
+/** *************************************
+            Login form
+************************************ **/
+.accounts-form {
+  background: -moz-linear-gradient(#fefefe, #f4f4f4) repeat scroll 0 0 #f4f4f4;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 2px 2px 2px 2px;
+  box-shadow: 0 1px 6px #BBBBBB;
+  margin: 50px auto 30px;
+  padding: 30px 0 0;
+  text-align: center;
+  max-width: 500px;
+  min-width: 320px;
+  box-shadow: none;
+  margin-top: 50px;
+  padding: 0;
+}
+.accounts-form h2 {
+  color: #222222;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.accounts-form small {
+  color: #666666;
+}
+.accounts-form #auth-form {
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  margin: 0;
+  padding: 0 0 40px;
+}
+.accounts-form #auth-form h3 {
+  font-size: 16px;
+  font-weight: normal;
+  margin: 1em 0;
+}

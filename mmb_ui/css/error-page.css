@@ -1,0 +1,25 @@
+/*------------------------------------------------------------------
+
+[Dashboard Stylesheet]
+
+	Project:		Maniadmin V2.0 - Responsive Admin Theme
+	Version:		2.0
+	Last change:	07/12/2012
+	Assigned to:	Turbo
+-------------------------------------------------------------------*/
+/* Page 404 */
+.errorWrapper {
+  margin: 200px auto;
+  width: 559px;
+  text-align: center;
+  color: #F1F1F1;
+  text-shadow: 1px 1px #333333;
+}
+.errorWrapper h1 {
+  font-size: 34px;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px #333333;
+}
+body.error {
+  background: url('../img/bg-rep.png') repeat #666666;
+}

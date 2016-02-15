@@ -1,0 +1,33 @@
+/*------------------------------------------------------------------
+
+[Dashboard Stylesheet]
+
+    Project:        Maniadmin V2.0 - Responsive Admin Theme
+    Version:        2.0
+    Last change:    07/12/2012
+    Assigned to:    Turbo
+-------------------------------------------------------------------*/
+/** *************************************
+            chat page 
+************************************ **/
+#chat .msgs {
+  border: 1px solid #DDDDDD;
+  height: 500px;
+  background: #FFFFFF;
+  overflow: auto;
+}
+#chat .msgs .send {
+  background: #efeded;
+  padding: 10px;
+}
+#connected li {
+  padding: 4px 0 0 0;
+}
+#connected .input-append {
+  margin-left: 13px;
+}
+#connected .status {
+  padding: 0px;
+  margin-left: 14px;
+  height: 16px;
+}

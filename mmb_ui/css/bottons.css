@@ -1,0 +1,19 @@
+/*------------------------------------------------------------------
+
+[Dashboard Stylesheet]
+
+	Project:		Maniadmin V2.0 - Responsive Admin Theme
+	Version:		2.0
+	Last change:	07/12/2012
+	Assigned to:	Turbo
+-------------------------------------------------------------------*/
+
+/** *************************************
+            Button 
+************************************ **/
+.btn.btn-rend {
+    -webkit-border-radius: 23px;
+    -moz-border-radius: 23px;
+    border-radius: 23px;
+    height: 36px;
+}
