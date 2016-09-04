@@ -599,8 +599,15 @@ namespace mmb
                         //Grab a download location that is not from the exclusion list and set it for the current episode
                         foreach (var download_perf in ConfigurationManager.AppSettings["download_perf"].Split(','))
                         {
-                            foreach ( var d in officialEpisode.ToList<Episode>()[0].DownloadLocations.Where(d => d.Contains(download_perf)))
-                            { showsToDownload[showsToDownload.IndexOf(e)].DownloadLocation = d;  break; }
+                            foreach (
+                                var d in
+                                    officialEpisode.ToList<Episode>()[0].DownloadLocations.Where(
+                                        d => d.Contains(download_perf)))
+                            {
+                                string alteredDownloadLoc = d;
+                                if (alteredDownloadLoc.Substring(0, 1) == @"z") alteredDownloadLoc = "https://" + alteredDownloadLoc;
+                                showsToDownload[showsToDownload.IndexOf(e)].DownloadLocation = alteredDownloadLoc; break;
+                            }
                         }
 
                         if (showsToDownload[showsToDownload.IndexOf(e)].DownloadLocation == null)

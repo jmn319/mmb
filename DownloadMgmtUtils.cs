@@ -114,40 +114,46 @@ namespace mmb
 
                 foreach (var s in showsToDownload.Where(s => !TvUtils.IsInPending(s)))
                 {
-                    //Download torrent file to temp folder first to be able to extract the video 
-                    DownloadFile(s.DownloadLocation,
-                        ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" + s.Name +
-                        " S" + s.Season.ToString("00") + "E" + s.Episode.ToString("00") + ".torrent");
-                    //Pull video filename out of the torrent file
-                    string name = TvUtils.NameFromDownloadString(s.Name, s.Season.ToString("00"),
-                        s.Episode.ToString("00"));
-                    
-                    //int nameIndex = name.IndexOf("FileName");
-                    int nameIndex = name.IndexOf(ConfigurationManager.AppSettings["torrent_filename_marker"]);
-                    pendingCollection.Insert(new Pending()
+                    try
                     {
-                        FileName = name.Substring(
+                        //Download torrent file to temp folder first to be able to extract the video 
+                        DownloadFile(s.DownloadLocation,
+                            ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" + s.Name +
+                            " S" + s.Season.ToString("00") + "E" + s.Episode.ToString("00") + ".torrent");
+                        //Pull video filename out of the torrent file
+                        string name = TvUtils.NameFromDownloadString(s.Name, s.Season.ToString("00"),
+                            s.Episode.ToString("00"));
+
+                        //int nameIndex = name.IndexOf("FileName");
+                        int nameIndex = name.IndexOf(ConfigurationManager.AppSettings["torrent_filename_marker"]);
+                        pendingCollection.Insert(new Pending()
+                        {
+                            FileName = name.Substring(
                                 nameIndex + name.Substring(nameIndex + 4, 4).Split(':')[0].Length + 5,
                                 Convert.ToInt32(name.Substring(nameIndex + 4, 4).Split(':')[0])),
-                        Name = s.Name,
-                        Show = true,
-                        Movie = false,
-                        Episode = s.Episode,
-                        Season = s.Season
-                    });
-                    //Move the torrent file from temp into downloads
-                    MoveFile(ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" +
-                             s.Name + " S" + s.Season.ToString("00") + "E" + s.Episode.ToString("00") + ".torrent",
-                        ConfigurationManager.AppSettings["torrent_download_path"] + @"\" +
-                        s.Name + " S" + s.Season.ToString("00") + "E" + s.Episode.ToString("00") + ".torrent");
-                    break;
+                            Name = s.Name,
+                            Show = true,
+                            Movie = false,
+                            Episode = s.Episode,
+                            Season = s.Season
+                        });
+                        //Move the torrent file from temp into downloads
+                        MoveFile(ConfigurationManager.AppSettings["temp_torrent_download_path"] + @"\" +
+                                 s.Name + " S" + s.Season.ToString("00") + "E" + s.Episode.ToString("00") + ".torrent",
+                            ConfigurationManager.AppSettings["torrent_download_path"] + @"\" +
+                            s.Name + " S" + s.Season.ToString("00") + "E" + s.Episode.ToString("00") + ".torrent");
+                        break;
+                    }
+                    catch (Exception e)
+                    { Log.AppendToLog(": FATAL download torrent. " + s.Name + " Season: " + s.Season + " Episode: " + s.Episode, 
+                        ConfigurationManager.AppSettings["log_file"]); }
                 }
             }
             catch (Exception e)
             { Log.AppendToLog(": FATAL download show. " + e, ConfigurationManager.AppSettings["log_file"]); }
         }
 
-        //Updated July 24th - TODO: Need to accept download quality from uesr in config
+        //Updated July 24th - TODO: Need to accept download quality from user in config
         public static void DownloadMovies(List<Movie> moviesToDownload)
         {
             try
