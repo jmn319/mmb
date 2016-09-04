@@ -5,14 +5,23 @@ namespace mmb
 {
     class Log
     {
-        public static void AppendToLog(string logMessage, string fileLocation)
+        public static void AppendToLog(string logMessage, string fileLocation, int memLeakPrevent = 0)
         {
-            using (StreamWriter w = File.AppendText(fileLocation))
+            //Arbitrarily set a bound so that a memory leak is not created
+            if (memLeakPrevent < 20)
             {
-                w.WriteLine("\r\n{0} {1}", DateTime.Now.ToLongTimeString(),
-                DateTime.Now.ToLongDateString());
-                w.WriteLine("  :{0}", logMessage);
-            }
+                try
+                {
+                    using (StreamWriter w = File.AppendText(fileLocation))
+                    {
+                        w.WriteLine("\r\n{0} {1}", DateTime.Now.ToLongTimeString(),
+                            DateTime.Now.ToLongDateString());
+                        w.WriteLine("  : {0}", logMessage);
+                    }
+                }
+                catch (Exception e)
+                { AppendToLog(logMessage, fileLocation, memLeakPrevent++); }
+            } 
         }
     }
 }
